@@ -13,7 +13,10 @@ That encourage me to develop this program to control the power supply, I can now
 power parameters for my own project.  I also hope other owner of this power supply may found it userful, or get
 source code enhance it or just change it to meet your specific need.
 
-Source code it in https://github.com/mckenm/HanmaTekPSUCmd 
+Source code it in https://github.com/mckenm/HanmaTekPSUCmd  
+  
+You can download the release version of code and binary from https://github.com/mckenm/HanmaTekPSUCmd/releases
+
 
 Hope you will found some use of it!
 
