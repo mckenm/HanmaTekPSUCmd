@@ -121,14 +121,15 @@ namespace hmps_cmd
             {
                 if (!HelpShown)
                 {
-                    Console.WriteLine("HM-PS Control CMD by Mcken Mak 2020\nUse on HanmaTEK power Supply HM310P or lower model.");
+                    Console.WriteLine("HM-PS Control CMD Ver {0} by Mcken Mak 2020\nUse on HanmaTEK power Supply HM310P or lower model.",
+                        System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
                     Console.WriteLine("\n\n" + HelpText.AutoBuild(result, _ => _, _ => _) + "\nERROR - See above");
                     HelpShown = true;
                 }
                 return;
             }
-            if (!options.Silent) Console.WriteLine("HM-PS Control CMD by Mcken Mak 2020\nUse on HanmaTEK power Supply HM310P or lower model.");
-
+            if (!options.Silent) Console.WriteLine("HM-PS Control CMD Ver {0} by Mcken Mak 2020\nUse on HanmaTEK power Supply HM310P or lower model.",
+                                    System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
 
             psu = new HanmatekPS();
             try

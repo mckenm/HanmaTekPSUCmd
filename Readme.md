@@ -57,7 +57,6 @@ To use alisa with the above example to PSU2 that set to COM7, just do the follow
 
 
 
-
 ```
 > hmps-cmd.exe --help
 hmps-cmd 0.1.0.0
