@@ -1,4 +1,13 @@
-
+/**
+ *  Original code from https://github.com/DRKPI/Modbus-Poll.git 
+ *  - Removed Regions
+ *  - Added SendFc6
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +20,7 @@ namespace HanmatekPSLib
     {
         private SerialPort sp = new SerialPort();
         public string modbusStatus;
-        private int v;
+        //private int v;
 
         public modbus()
         {
@@ -19,7 +28,7 @@ namespace HanmatekPSLib
 
         public modbus(int v)
         {
-            this.v = v;
+            //this.v = v;
         }
 
         ~modbus()
@@ -39,8 +48,8 @@ namespace HanmatekPSLib
                 sp.Parity = parity;
                 sp.StopBits = stopBits;
                 //These timeouts are default and cannot be editted through the class at this point:
-                sp.ReadTimeout = 1000;
-                sp.WriteTimeout = 1000;
+                sp.ReadTimeout = 500;
+                sp.WriteTimeout = 500;
 
                 try
                 {
@@ -88,7 +97,6 @@ namespace HanmatekPSLib
         {
             //Function expects a modbus message of any length as well as a 2 byte CRC array in which to 
             //return the CRC values:
-
             ushort CRCFull = 0xFFFF;
             byte CRCHigh = 0xFF, CRCLow = 0xFF;
             char CRCLSB;

@@ -53,10 +53,14 @@ namespace hmps_cmd
             HelpText = "Set Over Current Protection - range 0.0-10.500, need trun it on/off with button")]
         public string setOCPStr { get; set; }
 
-        [Option("Buzzer", Default = OnOffSwitch.__NotDefined__, 
+        [Option("Buzzer", Default = OnOffSwitch.__NotDefined__,
             HelpText = "On/Off - Turn Buzzer On or Off")]
         public OnOffSwitch SetBuzzer { get; set; }
-        
+
+        [Option('s', "Silent", Default = false,
+            HelpText = "Disable normal messages")]
+        public bool Silent { get; set; }
+
     }
 
     class Program
@@ -101,7 +105,6 @@ namespace hmps_cmd
         static void Main(string[] args)
         {
             // Setup custom parser to set case sensitive off 
-            Console.WriteLine("HM-PS Control CMD by Mcken Mak 2020\nUse on HanmaTEK power Supply HM310P or lower model.");
             var parser = new Parser(settings =>
             {
                 settings.CaseSensitive = false;
@@ -118,12 +121,13 @@ namespace hmps_cmd
             {
                 if (!HelpShown)
                 {
+                    Console.WriteLine("HM-PS Control CMD by Mcken Mak 2020\nUse on HanmaTEK power Supply HM310P or lower model.");
                     Console.WriteLine("\n\n" + HelpText.AutoBuild(result, _ => _, _ => _) + "\nERROR - See above");
                     HelpShown = true;
                 }
                 return;
             }
-            //TestCode();
+            if (!options.Silent) Console.WriteLine("HM-PS Control CMD by Mcken Mak 2020\nUse on HanmaTEK power Supply HM310P or lower model.");
 
 
             psu = new HanmatekPS();
@@ -132,19 +136,19 @@ namespace hmps_cmd
                 // Options that do not operate PSU or will terminate
                 if (options.ListCOMPorts)
                 {
-                    Console.WriteLine("List COM ports in the system:");
+                    Console.WriteLine("\nList COM ports in the system:");
                     string[] ports = SerialPort.GetPortNames();
                     Array.Sort(ports, StringComparer.InvariantCulture);
                     foreach (string p1 in ports)
                         Console.Write("{0} ", p1);
-                    Console.WriteLine("\n\nExit without doing execute PSU task.");
-
+                    Console.WriteLine("\n\nExit skips any PSU task.");
+                    return;
                 }
 
                 // Start PSU operations
                 if (!psu.Open(options.comPort))
                 {
-                    Console.WriteLine("Open COM port [{1}]Error: {0}", psu.getModbugStatus(), options.comPort);
+                    Console.WriteLine("Open COM port [{1}] Error: {0}", psu.getModbugStatus(), options.comPort);
                     return;
                 }
 
@@ -154,7 +158,7 @@ namespace hmps_cmd
                 {
                     ushort Volt = ConvCheckValue(options.setVoltageStr, 2, 0.0F, 32.0F, "SetVol");
                     ushort Curr = ConvCheckValue(options.setCurrentLimitStr, 3, 0.0F, 10.10F, "SetCur");
-                    Console.WriteLine("Set both Vol[{0}/{1}]/Cur[{2}/{3}].",options.setVoltageStr,Volt, options.setCurrentLimitStr,Curr);
+                    if (!options.Silent) Console.WriteLine("Set both Vol[{0}/{1}]/Cur[{2}/{3}].",options.setVoltageStr,Volt, options.setCurrentLimitStr,Curr);
                     psu.setVoltageAndCurrent(Volt, Curr);
                 }
                 else
@@ -163,14 +167,14 @@ namespace hmps_cmd
                     {
                         ushort val = ConvCheckValue(options.setVoltageStr, 2, 0.0F, 32.0F, "SetVol");
 
-                        Console.WriteLine("Setting Voltage to [{0}]/{1}", options.setVoltageStr, val);
+                        if (!options.Silent) Console.WriteLine("Setting Voltage to [{0}]/{1}", options.setVoltageStr, val);
                         psu.setVoltage(val);
                     }
                     if (options.setCurrentLimitStr != null)
                     {
                         ushort val = ConvCheckValue(options.setCurrentLimitStr, 3, 0.0F, 10.10F, "SetCur");
 
-                        Console.WriteLine("Setting Current limit to [{0}]/{1}", options.setCurrentLimitStr, val);
+                        if (!options.Silent) Console.WriteLine("Setting Current limit to [{0}]/{1}", options.setCurrentLimitStr, val);
                         psu.setCurrent(val);
                     }
                 }
@@ -179,33 +183,30 @@ namespace hmps_cmd
                 {
                     ushort val = ConvCheckValue(options.setOVPStr, 2, 0.0F, 33.0F, "setOVP");
 
-                    Console.WriteLine("Setting Over Voltage Protection to [{0}]/{1}, need to set manually", options.setOVPStr, val);
+                    if (!options.Silent) Console.WriteLine("Setting Over Voltage Protection to [{0}]/{1}, need to set manually", options.setOVPStr, val);
                     psu.setOVP(val);
                 }
                 if (options.setOCPStr != null)
                 {
                     ushort val = ConvCheckValue(options.setOCPStr, 3, 0.0F, 10.50F, "setOCP");
 
-                    Console.WriteLine("Setting Over Current Protection to [{0}]/{1}, need to set manually", options.setOCPStr, val);
+                    if (!options.Silent) Console.WriteLine("Setting Over Current Protection to [{0}]/{1}, need to set manually", options.setOCPStr, val);
                     psu.setOCP(val);
                 }
 
                 // Set Switches
                 if (options.SetBuzzer != OnOffSwitch.__NotDefined__)
                 {
-                    Console.WriteLine("Buzzer set to [{0}]", options.SetBuzzer);
+                    if (!options.Silent) Console.WriteLine("Buzzer set to [{0}]", options.SetBuzzer);
                     psu.setBuzzer(options.SetBuzzer == OnOffSwitch.On ? true : false);
                 }
 
 
                 if (options.SetPowerSwitch != OnOffSwitch.__NotDefined__)
                 {
-                    Console.WriteLine("Power set to [{0}]", options.SetPowerSwitch);
+                    if (!options.Silent) Console.WriteLine("Power set to [{0}]", options.SetPowerSwitch);
                     psu.setPower(options.SetPowerSwitch == OnOffSwitch.On ? true : false);
                 }
-
-
-                //psu.getTest();
                 psu.Close();
             }
             catch (Exception ex)
@@ -246,11 +247,11 @@ namespace hmps_cmd
                 if (sVal != null)
                 {
                     options.comPort = sVal;
-                    Console.WriteLine("Used default port [{0}]", sVal);
+                    if (!options.Silent) Console.WriteLine("Useing default port [{0}]", sVal);
                 }
                 else
                 {
-                    Console.WriteLine("ERROR: Need use COM port as first parameter");
+                    Console.WriteLine("ERROR: Needed to put COM port as first parameter");
                     Error = true;
                     return;
                 }
@@ -260,11 +261,10 @@ namespace hmps_cmd
             if (!ports.Contains(options.comPort))
             {
                 // Check its a alias in config
-               
                 String sVal = ConfigurationManager.AppSettings.Get(options.comPort);
                 if (sVal != null)
                 {
-                    Console.WriteLine("Alias [{0}] is port [{1}]", options.comPort, sVal);
+                    if (!options.Silent) Console.WriteLine("Alias [{0}] = port [{1}] from hmps-cmd.exe.config", options.comPort, sVal);
                     options.comPort = sVal.ToUpper();
                 }
                 if (!ports.Contains(options.comPort))  // test one more time if its valid
