@@ -3,7 +3,9 @@ Bought two of the HanmaTek HM610P switching power supply to replace my discommis
 happy with it features in general. Especially it came with software that can control it through USB interface on Windows, but 
 the software does not do what I wanted.  
 
-I want to control it voltage, current, over current protect, able to turn on/off with varies of presets for
+Later found out this HanmaTek power supply actually is from eTOMMENS, a China power supply manufactor, wher it model is eTM-3010P, now some of the information found from the application's setting XML file start making senses.  http://www.etommens.com/products_content-2023956.html.  
+
+What I want are:  ontrol it voltage, current, over current protect, able to turn on/off with varies of presets for
 specific project or boards.  That software just does not do a good job for me.  
 
 With documents on its CD I found that it use MODBUS protocol on serial (FTDI-USB), and some setting found
